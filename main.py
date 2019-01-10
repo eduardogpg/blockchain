@@ -1,15 +1,22 @@
-from blockchain import BlockChain, Transaction, Mine
+from blockchain import BlockChain, Transaction, User, Mine
 from blockchain import generate_genesis
 
 if __name__ == '__main__':
     generate_genesis()
 
-    transaction1 = Transaction('Alice', 'Bob', 25)
-    transaction2 = Transaction('Bob', 'Caroline', 10)
+    alice = User()
+    bob = User()
+    caroline = User()
 
-    BlockChain.add_transacction(transaction1)
-    BlockChain.add_transacction(transaction2)
+    print(">", alice.public_key)
+    print(">", bob.public_key)
+    print(">", caroline.public_key)
 
-    miner = Mine()
-    if miner.mine():
-        print(miner.last_block_completed())
+    transaction1 = Transaction(alice.public_key, bob.public_key, 20)
+    transaction2 = Transaction(bob.public_key, caroline.public_key, 20)
+    transaction3 = Transaction(caroline.public_key, alice.public_key, 20)
+
+    user_miner = Mine(alice)
+
+    if user_miner.mine():
+        print(user_miner.last_block_completed().hash)

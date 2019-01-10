@@ -3,9 +3,9 @@ from .block import Block
 class BlockChain:
     blocks = []
     reward = 50
-    difficulty = 2
+    difficulty = 4
     transactions = []
-
+    
     def __inint__(self):
         pass
 
@@ -20,7 +20,21 @@ class BlockChain:
 
         BlockChain.blocks.append(block)
 
+        BlockChain.transactions.clear()
+
+        BlockChain.calculate_reward()
+        BlockChain.calculate_difficulty()
+
         return True
+
+    @classmethod
+    def calculate_reward(cls):
+        if BlockChain.number_of_blocks() % 25000 == 0:
+            BlockChain.reward = BlockChain.reward // 2
+
+    @classmethod
+    def calculate_difficulty(cls):
+        pass
 
     @classmethod
     def add_transacction(cls, transaction):
@@ -31,7 +45,7 @@ class BlockChain:
         return BlockChain.blocks[-1]
 
     @classmethod
-    def hast_last_block(cls):
+    def hash_last_block(cls):
         return BlockChain.last_block().hash
 
     @classmethod
@@ -45,16 +59,3 @@ class BlockChain:
     @classmethod
     def number_of_blocks(cls):
         return len(BlockChain.blocks)
-
-def generate_genesis():
-    """
-    https://www.blockchain.com/es/btc/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
-    https://en.bitcoin.it/wiki/Genesis_block#cite_note-block-1
-    """
-
-    block = Block(0, [], 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks')
-    block.calculate_hash()
-
-    if BlockChain.number_of_blocks() == 0:
-        BlockChain.blocks.append(block)
-        print(BlockChain.hast_last_block())
