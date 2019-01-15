@@ -4,4 +4,3 @@ from .blockchain import BlockChain
 from .block import Block
 from .transaction import Transaction
 from .wallet import Wallet
-from .mine import Mine

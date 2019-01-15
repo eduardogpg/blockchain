@@ -1,71 +1,76 @@
 from .block import Block
 
-#registrar nodo
-#verificar transacción
-#submit transacción
-#Crear bloque
-#hash
-#prueba de trabajo
-#validar prueba de trabajo
-#validar cadena de bloque
-#resolver conflicto
-
 class BlockChain:
-    blocks = []
-    reward = 50
-    difficulty = 4
-    transactions = []
-    nodes = set()
 
-    def __init__(self):
-        pass
+    difficulty = 2
+    reward = 2
 
-    @classmethod
-    def add_block(cls, block):
+    def __init__(self, user):
+        self.transactions = []
+        self.blocks = []
+        self.user = user
 
-        if BlockChain.hast_last_block != block.previous_block:
+    def set_user(self, user):
+        self.user = user
+
+    def add_transacction(self, transaction):
+        self.transactions.append(transaction)
+        return True
+
+    def add_block(self, block):
+
+        if self.hash_last_block() != block.previous_block:
             return False
 
-        if not BlockChain.valid_block(block):
+        if not BlockChain.is_valid_block(block):
             return False
 
-        BlockChain.blocks.append(block)
+        self.blocks.append(block)
+        self.transactions.clear()
 
-        BlockChain.transactions.clear()
-
-        BlockChain.calculate_reward()
-        BlockChain.calculate_difficulty()
+        self.calculate_reward()
+        self.calculate_difficulty()
 
         return True
 
+    def calculate_reward(self):
+        pass
+
+    def calculate_difficulty(self):
+        pass
+
+    def mine(self):
+        if not self.transactions:
+            return False
+
+        block = self.generate_block()
+
+        if Block.proof_of_work(block, BlockChain):
+            if self.add_block(block):
+                return block
+
+        return False
+
+    def generate_block(self):
+        return Block( self.index_last_block() + 1,
+                      self.transactions.copy(),
+                      self.hash_last_block(),
+                      self.user.public_key,
+                      BlockChain.reward)
+
     @classmethod
-    def calculate_reward(cls):
+    def check_blocks_validity(cls, chain):
         pass
 
     @classmethod
-    def calculate_difficulty(cls):
-        pass
-
-    @classmethod
-    def add_transacction(cls, transaction):
-        BlockChain.transactions.append(transaction)
-
-    @classmethod
-    def last_block(cls):
-        return BlockChain.blocks[-1]
-
-    @classmethod
-    def hash_last_block(cls):
-        return BlockChain.last_block().hash
-
-    @classmethod
-    def index_last_block(cls):
-        return BlockChain.last_block().index
-
-    @classmethod
-    def valid_block(cls, block):
+    def is_valid_block(cls, block):
         return block.hash.startswith('0' * BlockChain.difficulty)
 
-    @classmethod
-    def number_of_blocks(cls):
-        return len(BlockChain.blocks)
+    def last_block(self):
+        return self.blocks[-1]
+
+    def hash_last_block(self):
+        return self.last_block().hash
+
+    def index_last_block(self):
+        return self.last_block().index

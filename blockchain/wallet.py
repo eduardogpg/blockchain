@@ -12,7 +12,7 @@ class Wallet:
     def generate_keys(self):
         if self.public_key is not None and self.private_key is not None:
             return False
-            
+
         random_gen = Crypto.Random.new().read
 
         private_key = RSA.generate(1024, random_gen)

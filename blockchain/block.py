@@ -49,11 +49,12 @@ class Block:
 
     @classmethod
     def proof_of_work(cls, block, blockchain):
+
         block.nonce = 0
 
         hash = block.calculate_hash()
 
-        while not blockchain.valid_block(block):
+        while not blockchain.is_valid_block(block):
             block.calculate_hash()
             block.increment_nonce()
 
