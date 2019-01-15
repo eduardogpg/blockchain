@@ -1,6 +1,6 @@
 from .block import Block
 from .blockchain import BlockChain
-from .user import User
+from .wallet import Wallet
 
 def generate_genesis():
     """
@@ -8,7 +8,8 @@ def generate_genesis():
     https://en.bitcoin.it/wiki/Genesis_block#cite_note-block-1
     """
 
-    satoshi = User()
+    satoshi = Wallet()
+    
     block = Block(0, [],
                     'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
                     satoshi.public_key,

@@ -1,13 +1,13 @@
-from blockchain import BlockChain, Transaction, User, Mine
+from blockchain import BlockChain, Transaction, Wallet, Mine
 from blockchain import generate_genesis
 
 if __name__ == '__main__':
     generate_genesis()
 
-    alice = User()
-    bob = User()
-    caroline = User()
-
+    alice = Wallet()
+    bob = Wallet()
+    caroline = Wallet()
+    
     print(">", alice.public_key)
     print(">", bob.public_key)
     print(">", caroline.public_key)

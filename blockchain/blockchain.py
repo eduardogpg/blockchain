@@ -1,12 +1,23 @@
 from .block import Block
 
+#registrar nodo
+#verificar transacción
+#submit transacción
+#Crear bloque
+#hash
+#prueba de trabajo
+#validar prueba de trabajo
+#validar cadena de bloque
+#resolver conflicto
+
 class BlockChain:
     blocks = []
     reward = 50
     difficulty = 4
     transactions = []
-    
-    def __inint__(self):
+    nodes = set()
+
+    def __init__(self):
         pass
 
     @classmethod
@@ -29,8 +40,7 @@ class BlockChain:
 
     @classmethod
     def calculate_reward(cls):
-        if BlockChain.number_of_blocks() % 25000 == 0:
-            BlockChain.reward = BlockChain.reward // 2
+        pass
 
     @classmethod
     def calculate_difficulty(cls):
