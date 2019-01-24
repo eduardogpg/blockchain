@@ -1,4 +1,5 @@
 import datetime
+from collections import OrderedDict
 
 class Transaction:
     def __init__(self, sender, recipient, amount):
@@ -8,13 +9,12 @@ class Transaction:
         self.timestamp = datetime.datetime.now()
 
     def to_hash(self):
-        #__dict__
-        return {
+        return OrderedDict({
             'sender': self.sender,
             'recipient': self.recipient,
             'amount': self.amount,
             'timestamp': str(self.timestamp),
-        }
+        })
 
     def __str__(self):
         return str(self.to_hash())

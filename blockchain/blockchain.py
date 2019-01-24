@@ -1,17 +1,22 @@
+from uuid import uuid4
 from .block import Block
+from urllib.parse import urlparse
 
 class BlockChain:
 
-    difficulty = 2
+    difficulty = 4
     reward = 2
 
     def __init__(self, user):
         self.transactions = []
         self.blocks = []
+        self.node = []
         self.user = user
+        self.node_id = str(uuid4()).replace('-', '')
 
-    def set_user(self, user):
-        self.user = user
+    def register_node(self, node):
+        self.node.append(node)
+        return True
 
     def add_transacction(self, transaction):
         self.transactions.append(transaction)
@@ -55,16 +60,7 @@ class BlockChain:
         return Block( self.index_last_block() + 1,
                       self.transactions.copy(),
                       self.hash_last_block(),
-                      self.user.public_key,
                       BlockChain.reward)
-
-    @classmethod
-    def check_blocks_validity(cls, chain):
-        pass
-
-    @classmethod
-    def is_valid_block(cls, block):
-        return block.hash.startswith('0' * BlockChain.difficulty)
 
     def last_block(self):
         return self.blocks[-1]
@@ -74,3 +70,7 @@ class BlockChain:
 
     def index_last_block(self):
         return self.last_block().index
+
+    @classmethod
+    def is_valid_block(cls, block):
+        return block.hash.startswith('0' * BlockChain.difficulty)

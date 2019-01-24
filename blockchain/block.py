@@ -1,14 +1,14 @@
 import hashlib
 import datetime
+from collections import OrderedDict
 
 class Block:
-    def __init__(self, index, transactions, previous_block, solved_by, reward):
+    def __init__(self, index, transactions, previous_block, reward):
         self.index = index
         self.transactions = transactions
         self.number_transactions = len(self.transactions)
         self.timestamp = datetime.datetime.now()
         self.previous_block = previous_block
-        self.solved_by = solved_by
         self.reward = reward
         self.nonce = 0
 
@@ -27,16 +27,15 @@ class Block:
         return [transaction.to_hash() for transaction in self.transactions]
 
     def to_hash(self):
-        return {
+        return OrderedDict({
             'index': self.index,
             'transactions': self.transactions_to_hash(),
             'number_transactions' : str(self.number_transactions),
             'timestamp': str(self.timestamp),
             'previous_block': self.previous_block,
-            'solved_by': self.solved_by,
             'reward': self.reward,
             'nonce': str(self.nonce)
-        }
+        })
 
     def to_string(self):
         return str(self.to_hash())

@@ -12,10 +12,9 @@ def generate_genesis():
 
     block = Block(0, [],
                     'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
-                    satoshi.public_key,
                     BlockChain.reward)
 
     block.calculate_hash()
     blockchain.blocks.append(block)
-
+    
     return blockchain
