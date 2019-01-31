@@ -10,7 +10,7 @@ class Block:
         self.timestamp = datetime.datetime.now()
         self.previous_block = previous_block
         self.reward = reward
-        self.nonce = 0
+        self.nonce = 0 #32 bit (4 byte)
 
     def increment_nonce(self):
         self.nonce += 1
@@ -41,15 +41,13 @@ class Block:
         return str(self.to_hash())
 
     def to_encode(self):
-        return self.to_string().encode()
+        return self.to_string().encode('utf8')
 
     def __str__(self):
         return self.to_string()
 
     @classmethod
     def proof_of_work(cls, block, blockchain):
-
-        block.nonce = 0
 
         hash = block.calculate_hash()
 

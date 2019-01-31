@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+  Generar Wallet
+{% endblock %}
+
+{% block form %}
+<form id="wallet-form">
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Private Key</strong></label>
+    <div class="col-sm-11">
+      <textarea class="form-control" name="private" id="private" rows="3"></textarea>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Public Key</strong></label>
+    <div class="col-sm-11">
+      <textarea class="form-control" name="public" id="public" rows="3"></textarea>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Address</strong></label>
+    <div class="col-sm-11">
+      <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-lg-1 text-center">
+      <input type="button" id="generate_wallet" class="btn btn-primary btn-lg" value="Generar wallet">
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+  $( document ).ready(function() {
+      $("#generate_wallet" ).click(function( event ) {
+        event.preventDefault();
+
+        $.ajax({
+          url: "/generate_wallet",
+          type: 'POST',
+          data: $("#wallet-form").serialize(),
+          success: function(response){
+            private_key = response['private_key'];
+            public_key = response['public_key'];
+            address = response['address'];
+
+            $("#public").val(public_key);
+            $("#private").val(private_key);
+            $("#address").val(address);
+
+          },
+          error: function(error){
+            console.log(error);
+          }
+      });
+    });
+  });
+</script>
+{% endblock %}

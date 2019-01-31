@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Generar nonce
+{% endblock %}
+
+{% block form %}
+<form id="block-form">
+  <div class="row">
+    <label class="col-sm-1"><strong>Index</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="index" id="index" class="form-control">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Difficulty</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="difficulty" id="difficulty" class="form-control" value={{ difficulty }} readonly>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Nonce</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="nonce" id="nonce" class="form-control">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Content</strong></label>
+    <div class="col-sm-11">
+      <textarea class="form-control" name="content" id="content" rows="1"></textarea>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Previous</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="previous" id="previous" class="form-control">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Hash</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="hash" id="hash" rows="2" class="form-control" readonly>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-lg-1 text-center">
+      <input type="button" id="generate_nonce" class="btn btn-primary btn-lg" value="Generar nonce">
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+  $( document ).ready(function() {
+
+      $("#index").val("1");
+      $("#content").val("Transactions list");
+      $("#previous").val("The Times 03/Jan/2009 Chancellor on brink of second bailout for banks");
+      $("#nonce").val("0");
+
+      $("#generate_nonce" ).click(function( event ) {
+        event.preventDefault();
+
+        $.ajax({
+          url: "/generate_nonce",
+          type: 'POST',
+          data: $("#block-form").serialize(),
+          success: function(response){
+            hash = response['hash'];
+            nonce = response['nonce'];
+
+            $("#hash").val(hash);
+            $("#nonce").val(nonce);
+          },
+          error: function(error){
+            console.log(error);
+          }
+      });
+    });
+  });
+
+</script>
+
+{% endblock %}
