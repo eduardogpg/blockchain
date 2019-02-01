@@ -10,6 +10,11 @@ BITS = 1024
 
 class Wallet:
     def __init__(self):
+        """
+        A bitcoin wallet contains a collection of key pairs,
+        each consisting of a private key and a public key.
+        """
+
         self.public_key = None
         self.private_key = None
         self.address = None
@@ -31,12 +36,8 @@ class Wallet:
 
     def generate_keys(self):
         """
-        A bitcoin wallet contains a collection of key pairs,
-        each consisting of a private key and a public key.
-
-        The private key (k) is a number, usually picked at random.
-        From the private key, we use elliptic curve multiplication, a one-way cryptographic function, to generate a public key (K).
-        From the public key (K), we use a one-way cryptographic hash function to generate a bitcoin address (A)
+        The public key is used to receive funds,
+        and the private key is used to sign trans‐ actions to spend the funds.
         """
         random_generator = Crypto.Random.new().read
 

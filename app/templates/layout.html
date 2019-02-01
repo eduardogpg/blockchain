@@ -7,10 +7,7 @@
     <link href="/static/vendor/DataTables/css/datatables.min.css" rel="stylesheet">
     <link href="/static/css/custom.css" rel="stylesheet">
 
-    <script src="/static/vendor/jquery/jquery.min.js"></script>
-    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="/static/vendor/DataTables/js/datatables.min.js"></script>
-    <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 
   </head>
   <body>
@@ -24,7 +21,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item {% if active == 'proof_of_work' %}  active {% endif %}">
-              <a class="nav-link" href="{{url_for('.proof_of_work')}}">Prueba de trabajo</a>
+              <a class="nav-link" href="{{url_for('.proof_of_work')}}">Proof of work</a>
             </li>
             <li class="nav-item {% if active == 'block' %}  active {% endif %}">
               <a class="nav-link" href="{{url_for('.block')}}">Block
@@ -32,6 +29,10 @@
             </li>
             <li class="nav-item {% if active == 'wallet' %}  active {% endif %}">
               <a class="nav-link" href="{{url_for('.wallet')}}">Wallet
+              </a>
+            </li>
+            <li class="nav-item {% if active == 'transaction' %}  active {% endif %}">
+              <a class="nav-link" href="{{url_for('.transaction')}}">Transaction
               </a>
             </li>
           </ul>

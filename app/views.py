@@ -1,14 +1,21 @@
 import datetime
 
 from flask import Blueprint
-from flask import request, render_template, jsonify
+from flask import request, render_template, jsonify,redirect, url_for
 
 import sys
 sys.path.append("..")
 
+from blockchain import generate_genesis
 from blockchain import Block, Transaction, BlockChain, Wallet
 
 page = Blueprint('page', __name__)
+
+blockchain, satoshi = generate_genesis()
+
+@page.route('/')
+def index():
+    return redirect(url_for('.block'))
 
 @page.route('/block')
 def block():
@@ -21,7 +28,7 @@ def generate_block():
     content = request.form['content']
     previous = request.form['previous']
 
-    transaction = Transaction('satoshi', 'nakamoto', str(content))
+    transaction = Transaction(satoshi.private_key, satoshi.public_key, str(content))
     block = Block(int(index), [transaction], previous, 0)
 
     block.timestamp = datetime.datetime(2009, 1, 10, 12, 00)
@@ -35,7 +42,7 @@ def generate_block():
 def proof_of_work():
     return render_template('proof_of_work.html',
                             active='proof_of_work',
-                            difficulty=BlockChain.difficulty)
+                            difficulty=BlockChain.DIFFICULTY)
 
 @page.route('/generate_nonce', methods=['POST'])
 def generate_nonce():
@@ -44,7 +51,7 @@ def generate_nonce():
     previous = request.form['previous']
     nonce = request.form['nonce']
 
-    transaction = Transaction('satoshi', 'nakamoto', str(content))
+    transaction = Transaction(satoshi.private_key, satoshi.public_key, str(content))
     block = Block(int(index), [transaction], previous, 0)
 
     block.nonce = int(nonce)
@@ -64,3 +71,20 @@ def wallet():
 def generate_wallet():
     wallet = Wallet()
     return jsonify(wallet.to_hash()), 200
+
+@page.route('/transaction')
+def transaction():
+    return render_template('transaction.html', active='transaction')
+
+@page.route('/generate_transaction', methods=['POST'])
+def generate_transaction():
+    public_key = request.form['public_key']
+    private_key = request.form['private_key']
+    amount = request.form['amount']
+    fees = request.form['fees']
+
+    transaction = Transaction(private_key, public_key, amount, fees)
+    transaction.sign()
+
+    response = {'signature' : transaction.signature}
+    return jsonify(response), 200

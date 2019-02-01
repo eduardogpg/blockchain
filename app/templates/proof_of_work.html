@@ -68,6 +68,8 @@ Generar nonce
       $("#generate_nonce" ).click(function( event ) {
         event.preventDefault();
 
+        $("#generate_nonce").attr('value', 'Wait ...');
+
         $.ajax({
           url: "/generate_nonce",
           type: 'POST',
@@ -78,6 +80,7 @@ Generar nonce
 
             $("#hash").val(hash);
             $("#nonce").val(nonce);
+            $("#generate_nonce").attr('value', 'Generar nonce');
           },
           error: function(error){
             console.log(error);

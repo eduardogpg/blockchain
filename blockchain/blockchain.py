@@ -1,57 +1,106 @@
 from uuid import uuid4
+
+from datetime import timedelta
+
 from .block import Block
-from urllib.parse import urlparse
+from .transaction import Transaction
 
 class BlockChain:
 
-    difficulty = 4
-    reward = 2
+    DIFFICULTY = 4
+    REWARD = 50
 
-    def __init__(self, user):
-        self.transactions = [] #unverified
+    def __init__(self, private_key, public_key):
+        self.private_key = private_key
+        self.public_key = public_key
+
+        self.transactions = []
         self.blocks = []
-        self.nodes = set() #One machine, one vote
-        self.user = user
+        self.nodes = set()
         self.node_id = str(uuid4())
 
-    def register_node(self, node):
-        self.nodes.append(node)
+        self.register_node(self.node_id)
+
+    def register_node(self, node_id):
+        """
+        Any system, such as a server, desktop application, or wallet,
+        that participates in the bitcoin network by “speaking” the bitcoin protocol is called a bitcoin node.
+        """
+        self.nodes.add(node_id)
         return True
 
     def add_transacction(self, transaction):
-        #Es necesario validar la transacció para evitar el doble spend
-        #El orden depende de los fees
+        """
+        After validating transactions, a bitcoin node will add them to the memory pool,
+        or transaction pool, where transactions await until they can be included (mined) into a block.
+
+        Once a transaction is included in a block, it has one confirmation.
+        As soon as another block is mined on the same blockchain, the transaction has two confirmations, and so on.
+        Six or more confirmations is considered sufficient proof that a transaction cannot be reversed.
+        """
+        if not self.is_valid_transaction(transaction):
+            return False
 
         self.transactions.append(transaction)
         return True
 
     def add_block(self, block):
-
-        if self.hash_last_block() != block.previous_block:
-            return False
-
-        if not BlockChain.is_valid_block(block):
+        if not self.is_valid_block(block):
             return False
 
         self.blocks.append(block)
-
         self.calculate_reward()
         self.calculate_difficulty()
 
+        self.start_floogding()
+
+        return True
+
+    def start_floogding(self):
+        """
+        Any bitcoin node that receives a valid transaction
+        it has not seen before will immediately forward it to all other nodes to which it is connected,
+        a propagation technique known as flooding
+        """
+        pass
+
+    def is_valid_block(self, block):
+        """
+        The bitcoin system of trust is based on computation.
+
+        Transactions are bundled into blocks,
+        which require an enormous amount of computation to prove, 
+        but only a small amount of computation to verify as proven
+        """
+        if not self.is_valid_proof_of_work(block):
+            return False
+
+        if block.previous_block != self.get_hash_last_block():
+            return False
+
+        coinbase = block.transactions[0]
+        if coinbase.amount != self.get_total_reward(block.transactions):
+            return False
+
+        if block.timestamp > (block.timestamp + timedelta(hours=2)):
+            return False
+        #218
+
+        return True
+
+    def is_valid_transaction(self, transaction):
         return True
 
     def calculate_reward(self):
-        pass
+        if len(self.blocks) % 210000 == 0:
+            BlockChain.REWARD / 2
 
     def calculate_difficulty(self):
-        pass
+        if len(self.blocks) % 2016 == 0:
+
 
     def mine(self):
-        if not self.transactions:
-            return False
-
-        block = self.generate_block()
-        self.transactions.clear()
+        block = self.generate_unconfirmed_block()
 
         if Block.proof_of_work(block, BlockChain):
             if self.add_block(block):
@@ -59,51 +108,56 @@ class BlockChain:
 
         return False
 
-    def generate_block(self):
-        #Cuandoa alguien encuentra un bloque todos los nodos dejan de trabajar
-        #y se concentran en lo que sigue
+    def generate_unconfirmed_block(self):
 
+        unconfirmed_transactions = self.transactions.copy()
+        self.transactions.clear()
+
+        coinbase = self.get_coinbase(unconfirmed_transactions)
+        unconfirmed_transactions.insert(0, coinbase)
+
+        block = Block(self.get_index_last_block() + 1,
+                        unconfirmed_transactions,
+                        self.get_hash_last_block(),
+                        coinbase.amount)
+
+        return block
+
+    def get_total_reward(self, transactions):
+        return BlockChain.REWARD + self.get_total_fees(transactions)
+
+    def get_coinbase(self, transactions):
+        """
+        The first transaction in any block is a special transaction, called a coinbase transaction.
+        This transaction is constructed by Jing’s node and contains his reward for the mining effort
+        """
+        return Transaction(self.private_key,
+                            self.public_key,
+                            self.get_total_reward(transactions))
+
+    def get_total_fees(self, transactions):
         """
         Is Each miner includes a special transaction in his block
         one that pays his own bitcoin address the block reward
         plus the sum of transaction fees from all the transactions included in the block.
         """
+        return sum([ transaction.fees for transaction in transactions ])
 
-        """
-        The first transaction in any block is a special transaction, called a coinbase transac‐ tion. This transaction is constructed by Jing’s node and contains his reward for the mining effort
-        """
-        self.add_coinbase()
-
-        return Block( self.index_last_block() + 1,
-                      self.transactions.copy(),
-                      self.hash_last_block(),
-                      BlockChain.reward)
-
-    def add_coinbase(self):
-        transaction = Transaction('sender_address', 'sender_private_key', 'recipient_address', BlockChain.reward)
-        self.transactions.insert(transaction, 0)
-
-    def last_block(self):
+    def get_last_block(self):
         return self.blocks[-1]
 
-    def hash_last_block(self):
-        return self.last_block().hash
+    def get_hash_last_block(self):
+        return self.get_last_block().hash
 
-    def index_last_block(self):
-        return self.last_block().index
+    def get_index_last_block(self):
+        return self.get_last_block().index
 
     @classmethod
-    def is_valid_block(cls, block):
-        return block.hash.startswith('0' * BlockChain.difficulty)
-
-
+    def is_valid_proof_of_work(cls, block):
+        return block.hash.startswith('0' * BlockChain.DIFFICULTY)
 
 # TODO:
 """
-Firmas
 validar firmas
-Cada x recalcular
-Agregar el coinbase a cada bloque.
-Aplicar la prueba de trabajo
 implementra criterios de acpeptación
 """

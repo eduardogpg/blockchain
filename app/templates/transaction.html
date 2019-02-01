@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+  Transacción
+{% endblock %}
+
+{% block form %}
+<form id="wallet-form">
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Private Key</strong></label>
+    <div class="col-sm-11">
+      <textarea class="form-control" name="private_key" id="private" rows="3"></textarea>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Public Key</strong></label>
+    <div class="col-sm-11">
+      <textarea class="form-control" name="public_key" id="public" rows="3"></textarea>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Amount</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="amount" id="amount" class="form-control">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Fees</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="fees" id="fees" class="form-control">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <label class="col-sm-1"><strong>Signature</strong></label>
+    <div class="col-sm-11">
+      <input type="text" name="signature" id="signature" rows="2" class="form-control" readonly>
+    </div>
+  </div>
+  <br>
+
+  <div class="row">
+    <div class="col-lg-1 text-center">
+      <input type="button" id="generate_transaction" class="btn btn-primary btn-lg" value="Generar Transacción">
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+  $( document ).ready(function() {
+
+    $("#private").val("3082025c020100028181009fa2bcb2087e2d1370a41e261eab3baf25a3cf11d84974739af3307b5cf4de3cd8041cd64c1e36fc156842279614f32c0ac976a9a16269b960c0192bd54830d600cf0014761edfc52ab0d2c7e0d9e1b920af764701ae7439a46362756279cbacf959724d121aad87ed7b6b330925b5b73c536f5efe42646d96a9432879ada9870203010001028181008cd38cb1664aa14b5008884c4aabf69819957bfc1b1919f14e55918492c9b63068c4a007f0d88adb31ab6b08ef1e86336944b7390815007db83b5f394b0b47806dc289f648853473f6825ecf6f6fe03f3084b94a54cc9c510e8b216963d0b410a3fa227971a25dc1107acebcd1ca9236f3dab4c497963993c694491e251d7859024100bfb8b86096d40cb8c4c3495c16a67c523d7d95b10c13d80b651d160f1c503a0bbe87ac818f7610213e51aa3fdbfaf235b5d8d726fc464ede891540e701fb1a85024100d5281df19862c9d54c1db72e14d07020436446d49f74646878702c66ad0ed2029bbad460c1d7f108a01992b95f3fddfb8a699228fa53418180bf7ce4d23c9f9b024078ec919e9a8374e2b5785734f6345c05a3332acf58c6cb65a4890bf8cbeaee31aa22f8f35f01207b574b3b0ebc3933bc1cce8025dec899c652c04d07678071e102401e8492dcef2b5da84b3089f4700873b53ad0d58f45911d7b139b43d02380d6b286e755d6d08a013971ea976630ebecf54198e1d33a1bc76a2a2bc04ee686c57702400c325746b866777ba6b214de91577c247f8f8d165c4c8fef912e9043d501e5abfe8ee8501b38ac3c4bedaad1a60e438a192c7935223e7bedaabb7fc0365202c6");
+
+    $("#public").val("30819f300d06092a864886f70d010101050003818d00308189028181009fa2bcb2087e2d1370a41e261eab3baf25a3cf11d84974739af3307b5cf4de3cd8041cd64c1e36fc156842279614f32c0ac976a9a16269b960c0192bd54830d600cf0014761edfc52ab0d2c7e0d9e1b920af764701ae7439a46362756279cbacf959724d121aad87ed7b6b330925b5b73c536f5efe42646d96a9432879ada9870203010001");
+    //$("#address").val("fb58a440b519b9dafddd6afd45c226d23987b934d9c9a5a19118f679c23df0fa");
+    $("#amount").val("10");
+    $("#fees").val("0");
+
+    $("#generate_transaction" ).click(function( event ) {
+      event.preventDefault();
+
+      $.ajax({
+        url: "/generate_transaction",
+        type: 'POST',
+        data: $("#wallet-form").serialize(),
+        success: function(response){
+          signature = response['signature'];
+          $("#signature").val(signature);
+        },
+        error: function(error){
+          console.log(error);
+        }
+    });
+  });
+
+  });
+</script>
+{% endblock %}

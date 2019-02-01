@@ -1,5 +1,7 @@
-import hashlib
 import datetime
+
+from Crypto.Hash import SHA256
+
 from collections import OrderedDict
 
 class Block:
@@ -10,14 +12,13 @@ class Block:
         self.timestamp = datetime.datetime.now()
         self.previous_block = previous_block
         self.reward = reward
-        self.nonce = 0 #32 bit (4 byte)
+        self.nonce = 0
 
     def increment_nonce(self):
         self.nonce += 1
 
     def calculate_hash(self):
-        sha = hashlib.sha256()
-        sha.update(self.to_encode())
+        sha = SHA256.new(self.to_encode())
 
         self.hash = sha.hexdigest()
 
@@ -41,7 +42,7 @@ class Block:
         return str(self.to_hash())
 
     def to_encode(self):
-        return self.to_string().encode('utf8')
+        return self.to_string().encode('ascii')
 
     def __str__(self):
         return self.to_string()
@@ -51,7 +52,7 @@ class Block:
 
         hash = block.calculate_hash()
 
-        while not blockchain.is_valid_block(block):
+        while not blockchain.is_valid_proof_of_work(block):
             block.calculate_hash()
             block.increment_nonce()
 
